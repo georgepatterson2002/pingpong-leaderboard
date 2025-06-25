@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ping Pong Leaderboard</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <div class="pingpong-ball"></div>
+
+  <!-- Title -->
+  <h1>
+  <span id="crazyToggle" style="cursor: pointer;" title="Toggle Crazy Mode">🏓</span>
+  Ping Pong Leaderboard 
+  
+</h1>
+
+  <!-- Match Form -->
+  <form id="matchForm">
+    <h2>Record a Match</h2>
+    <div>
+      <label for="winner">Player 1:</label>
+      <select id="winner"></select>
+    </div>
+        <div>
+      <label for="winnerCount">Games won by Player 1:</label>
+      <input type="number" id="winnerCount" min="0" required />
+    </div>
+    <div>
+      <label for="loser">Player 2:</label>
+      <select id="loser"></select>
+    </div>
+    <div>
+      <label for="loserCount">Games won by Player 2:</label>
+      <input type="number" id="loserCount" min="0" required />
+    </div>
+    <button type="submit">Submit Match</button>
+  </form>
+
+  <!-- Leaderboard -->
+  <h2>Leaderboard</h2>
+  <table id="leaderboard">
+    <thead>
+      <tr>
+        <th>Player</th>
+        <th>Wins</th>
+        <th>Losses</th>
+        <th>Total Games</th>
+        <th>Win %</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Match History -->
+  <h2>Match History</h2>
+  <ul id="matchHistory"></ul>
+
+  <script src="script.js"></script>
+</body>
+</html>
