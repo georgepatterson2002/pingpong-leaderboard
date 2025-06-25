@@ -66,7 +66,7 @@ CREATE TABLE matches (
 );
 ```
 
-> Make sure to pre-insert players (George, Max, Joaquinne) before starting.
+> Make sure to pre-insert players before starting.
 
 ---
 
