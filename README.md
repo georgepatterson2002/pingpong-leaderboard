@@ -8,7 +8,7 @@ A simple local web app to track ping pong matches, wins/losses, and leaderboard 
 - Automatically updates leaderboard with win/loss stats and win percentage
 - Match history list with winner, players, and timestamp (in LA time)
 - Fully LAN-accessible for local network multiplayer setups
-- Saves all data in PostgreSQL (no more JSON files!)
+- Saves all data in PostgreSQL
 
 ## 🛠️ Tech Stack
 
@@ -66,7 +66,7 @@ CREATE TABLE matches (
 );
 ```
 
-> Make sure to pre-insert players (George, Max, Joaquinne) before starting.
+> Make sure to pre-insert players before starting.
 
 ---
 
