@@ -11,6 +11,9 @@ const pool = new Pool();
 app.use(express.static(__dirname));
 app.use(express.json());
 
+// Serve static files from the 'public' folder
+app.use(express.static('public'));
+
 // Fetch matches and players
 app.get('/matches', async (req, res) => {
   try {

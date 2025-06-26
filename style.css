@@ -1,106 +1,187 @@
+:root {
+  --zombie-yellow: #e4d59b;
+  --zombie-olive: #c8b54c;
+  --zombie-moss: #a39d4d;
+  --zombie-green: #5b805b;
+  --zombie-dark-green: #3b5949;
+  --zombie-purple: #6b5b95;
+  --zombie-blood-red: #953131;
+  --zombie-gray: #6D7162;
+  --zombie-charcoal: #1b1b1b;
+}
+
+/* Base Layout */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Courier New', monospace;
   margin: 0;
   padding: 20px;
-  background: #f9f9f9;
+  background: var(--zombie-charcoal);
+  color: var(--zombie-yellow);
   text-align: center;
+  background-image: url("/textures/grunge-bg.png");
+  background-size: cover;
 }
+
 h1, h2 {
   margin-top: 20px;
+  text-shadow: 2px 2px #000;
+  color: var(--zombie-yellow);
 }
+
+/* Form Styling */
 form {
   display: inline-block;
   text-align: left;
   margin-bottom: 30px;
   padding: 20px;
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 8px;
+  border: 2px solid var(--zombie-green);
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  box-shadow: 0 0 10px var(--zombie-purple);
 }
+
 form div {
   margin-bottom: 15px;
 }
+
 label {
   font-weight: bold;
   display: block;
   margin-bottom: 5px;
+  color: var(--zombie-olive);
 }
-select, input, button {
+
+select, input {
   width: 100%;
   padding: 6px;
   font-size: 16px;
+  background: var(--zombie-gray);
+  border: 1px solid var(--zombie-moss);
+  color: #fff;
 }
+
+/* Button */
+button {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  background: var(--zombie-blood-red);
+  border: 2px solid var(--zombie-olive);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 1px 1px #000;
+}
+
+button:hover {
+  background: var(--zombie-olive);
+  color: var(--zombie-charcoal);
+}
+
+/* Table */
 table {
   margin: 0 auto 30px;
   border-collapse: collapse;
   width: 90%;
   max-width: 600px;
-  background: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 8px var(--zombie-purple);
 }
+
 th, td {
-  border: 1px solid #ccc;
+  border: 1px solid var(--zombie-green);
   padding: 10px;
   text-align: center;
+  color: var(--zombie-yellow);
 }
+
+/* Match History */
 ul#matchHistory {
   list-style: none;
   padding: 0;
   max-width: 600px;
   margin: 0 auto;
   text-align: left;
-  background: #fff;
-  border: 1px solid #ddd;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--zombie-green);
   border-radius: 8px;
+  color: var(--zombie-yellow);
+  box-shadow: 0 0 8px var(--zombie-purple);
 }
+
 ul#matchHistory li {
   padding: 8px 12px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--zombie-gray);
 }
 ul#matchHistory li:last-child {
   border-bottom: none;
 }
 
-/* CRAZY MODE STYLES */
+/* Cursors */
+button, button:hover {
+  cursor: pointer;
+}
 body.crazy-mode {
-  background: linear-gradient(-45deg, #ff69b4, #00ffff, #ffff00, #ff4500);
-  background-size: 400% 400%;
-  animation: bgshift 8s ease infinite;
+  background: linear-gradient(135deg, #ff00ff, #00ffff, #ffff00, #ff4500);
+  background-size: 600% 600%;
+  animation:
+    bgshift 8s ease-in-out infinite,
+    huePulse 10s linear infinite,
+    contrastFlash 15s ease-in-out infinite;
+  cursor: url("/cursors/pingpong.cur"), auto;
   font-family: 'Comic Sans MS', cursive;
-  color: #000;
+  color: #ffffff;
+  filter: contrast(1.7) saturate(2.5) brightness(1.2);
+  text-shadow: 1px 1px 2px #000;
   transform: rotate(0.5deg);
+  position: relative;
+  overflow-x: hidden;
 }
 
-@keyframes bgshift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+body.crazy-mode::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: url('/textures/swirl-noise.gif');
+  opacity: 0.2;
+  mix-blend-mode: lighten;
+}
+
+body.crazy-mode select,
+body.crazy-mode input,
+body.crazy-mode label {
+  cursor: url("/cursors/pingpong.cur"), auto;
+}
+body.crazy-mode button:hover,
+body.crazy-mode a:hover {
+  cursor: url("/cursors/pingpong-hover.cur"), pointer;
 }
 
 .crazy-mode h1, .crazy-mode h2 {
   animation: wiggle 0.5s infinite alternate;
-  color: #ff0;
-  text-shadow: 2px 2px #000;
+  color: magenta;
+  text-shadow: 2px 2px 4px #000, 0 0 10px #ff00ff;
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
 }
 
-@keyframes wiggle {
-  0% { transform: rotate(-2deg); }
-  100% { transform: rotate(2deg); }
-}
 
 .crazy-mode button {
-  background: repeating-linear-gradient(45deg, #00ffff, #00ffff 10px, #ff69b4 10px, #ff69b4 20px);
+  background: repeating-conic-gradient(magenta 0% 25%, black 0% 50%) 50% / 20px 20px;
+  color: #ffffff;
+  border: 3px solid rgb(0, 0, 0);
+  animation: bounce 0.5s infinite, glowPulse 1.5s ease-in-out infinite;
   font-weight: bold;
-  border: 3px solid #000;
-  animation: bounce 0.5s infinite;
+  text-shadow: 2px 2px 4px black;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-/* Ping Pong Ball Animation */
+/* Ping Pong Ball */
 .pingpong-ball {
+  display: none;
   position: fixed;
   top: 20%;
   left: -50px;
@@ -112,6 +193,49 @@ body.crazy-mode {
   animation: ballMove 4s linear infinite;
 }
 
+/* Emoji Spin */
+body.crazy-mode #crazyToggle {
+  display: inline-block;
+  animation: spin 2s linear infinite;
+}
+
+/* Leaderboard */
+body.crazy-mode #leaderboard {
+  border: 5px dashed transparent;
+  animation: rainbowBorder 2s linear infinite;
+}
+
+body.crazy-mode #leaderboard tr {
+  animation: jiggle 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes bgshift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes huePulse {
+  0%   { filter: hue-rotate(0deg); }
+  50%  { filter: hue-rotate(180deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes contrastFlash {
+  0%, 100% { filter: contrast(1.3); }
+  50%      { filter: contrast(1.8); }
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(-2deg); }
+  100% { transform: rotate(2deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
 @keyframes ballMove {
   0% { left: -50px; top: 20%; }
   25% { left: 100%; top: 40%; }
@@ -120,30 +244,9 @@ body.crazy-mode {
   100% { left: -50px; top: 20%; }
 }
 
-#crazyModeBtn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.pingpong-ball {
-  display: none;
-}
-
-body.crazy-mode #crazyToggle {
-  display: inline-block;
-  animation: spin 2s linear infinite;
-}
-
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
-}
-
-body.crazy-mode #leaderboard {
-  border: 5px dashed transparent;
-  animation: rainbowBorder 2s linear infinite;
 }
 
 @keyframes rainbowBorder {
@@ -154,6 +257,11 @@ body.crazy-mode #leaderboard {
   100% { border-color: blue; }
 }
 
+@keyframes jiggle {
+  0% { transform: translateX(-2px); }
+  100% { transform: translateX(2px); }
+}
+
 @keyframes fall {
   to {
     transform: translateY(120vh) rotate(720deg);
@@ -161,11 +269,8 @@ body.crazy-mode #leaderboard {
   }
 }
 
-body.crazy-mode #leaderboard tr {
-  animation: jiggle 0.3s ease-in-out infinite alternate;
-}
-
-@keyframes jiggle {
-  0% { transform: translateX(-2px); }
-  100% { transform: translateX(2px); }
+body.crazy-mode select:hover,
+body.crazy-mode input:hover,
+body.crazy-mode label:hover {
+  cursor: url("/cursors/pingpong-hover.cur"), pointer;
 }
