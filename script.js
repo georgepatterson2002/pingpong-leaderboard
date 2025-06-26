@@ -3,20 +3,62 @@ const winnerSelect = document.getElementById('winner');
 const loserSelect = document.getElementById('loser');
 const leaderboardBody = document.querySelector('#leaderboard tbody');
 const matchHistory = document.getElementById('matchHistory');
-const toggleEmoji = document.getElementById("crazyToggle");
+const crazyToggle = document.getElementById("crazyToggle");
 const ball = document.querySelector(".pingpong-ball");
+const themeToggle = document.getElementById('themeToggle');
+const baseLink = document.getElementById('baseStyle');
+const crazyStyle = document.getElementById('crazyStyle');
 
-// Data state
 let matches = [];
 let players = [];
-let usedMemeNames = new Set();
 
 document.addEventListener('DOMContentLoaded', () => {
-  
-  function dropConfetti() {
+  const savedTheme = localStorage.getItem('theme') || 'normal';
+  applyTheme(savedTheme);
+
+  themeToggle.addEventListener('click', () => {
+    const newMode = localStorage.getItem('theme') === 'zombie' ? 'normal' : 'zombie';
+    applyTheme(newMode);
+    themeToggle.style.transform = 'scale(1.4)';
+    themeToggle.style.transition = 'transform 0.3s ease';
+    setTimeout(() => {
+      themeToggle.style.transform = 'scale(1)';
+    }, 300);
+  });
+
+  crazyToggle.addEventListener("click", () => {
+    const isCrazy = document.body.classList.toggle("crazy-mode");
+    crazyStyle.disabled = !isCrazy;
+
+    ball.style.display = isCrazy ? "block" : "none";
+    if (isCrazy) dropConfetti();
+
+    crazyToggle.style.transform = "rotate(15deg)";
+    setTimeout(() => {
+      crazyToggle.style.transform = "rotate(0deg)";
+    }, 200);
+  });
+
+  fetchAndRender();
+  form.addEventListener('submit', handleSubmit);
+});
+
+function applyTheme(mode) {
+  baseLink.href = mode === 'zombie' ? 'style.css' : 'original-style.css';
+  themeToggle.textContent = mode === 'zombie' ? '🧠' : '🧟';
+  localStorage.setItem('theme', mode);
+
+  document.body.classList.remove('crazy-mode');
+  ball.style.display = 'none';
+
+  // Keep crazy stylesheet disabled until 🏓 is clicked
+  crazyStyle.disabled = true;
+}
+
+function dropConfetti() {
   for (let i = 0; i < 20; i++) {
     const confetti = document.createElement('div');
-    confetti.textContent = ['🏓','🤣','🤪','🌀','✨'][Math.floor(Math.random() * 5)];
+    confetti.textContent = ['🏓', '🤣', '🤪', '🌀', '✨'][Math.floor(Math.random() * 5)];
     confetti.style.position = 'fixed';
     confetti.style.left = Math.random() * window.innerWidth + 'px';
     confetti.style.top = '-50px';
@@ -28,119 +70,75 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 }
 
-  toggleEmoji.addEventListener("click", () => {
-    document.body.classList.toggle("crazy-mode");
-    if (document.body.classList.contains("crazy-mode")) {
-      ball.style.display = "block";
-      dropConfetti();
-    } else {
-      ball.style.display = "none";
-    }
+function handleSubmit(e) {
+  e.preventDefault();
+  const winner = winnerSelect.value;
+  const loser = loserSelect.value;
+  const winnerCount = parseInt(document.getElementById('winnerCount').value, 10);
+  const loserCount = parseInt(document.getElementById('loserCount').value, 10);
 
-    if (document.body.classList.contains("crazy-mode")) {
-      const memePool = ['🧠 Pongus', 'Mr. Smash', 'Spinny Guy', 'PingDing', 'Table Titan'];
-      const shuffledMemePool = memePool.slice().sort(() => Math.random() - 0.5);
+  if (winner === loser) {
+    alert("Winner and loser must be different.");
+    return;
+  }
 
-      let i = 0;
+  if (isNaN(winnerCount) || isNaN(loserCount) || (winnerCount + loserCount) === 0) {
+    alert("Please enter at least one game.");
+    return;
+  }
 
-      document.querySelectorAll('#leaderboard td:first-child').forEach(cell => {
-        if (!cell.dataset.original) {
-          cell.dataset.original = cell.textContent;
-        }
+  const matchesToSend = [];
 
-        // Reset used names if we exhausted all
-        if (usedMemeNames.size === memePool.length) {
-          usedMemeNames.clear();
-        }
+  for (let i = 0; i < winnerCount; i++) {
+    matchesToSend.push({
+      player1: winner,
+      player2: loser,
+      winner,
+      date: new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })).toISOString()
+    });
+  }
 
-        // Pick next available unique name
-        while (i < shuffledMemePool.length) {
-          const name = shuffledMemePool[i++];
-          if (!usedMemeNames.has(name)) {
-            cell.textContent = name;
-            usedMemeNames.add(name);
-            break;
-          }
-        }
-      });
+  for (let i = 0; i < loserCount; i++) {
+    matchesToSend.push({
+      player1: loser,
+      player2: winner,
+      winner: loser,
+      date: new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })).toISOString()
+    });
+  }
 
-    } else {
-      document.querySelectorAll('#leaderboard td:first-child').forEach(cell => {
-        if (cell.dataset.original) {
-          cell.textContent = cell.dataset.original;
-        }
-      });
-    }
-  });
+  fetch('/add-match', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(matchesToSend)
+  })
+    .then(res => res.json())
+    .then(data => {
+      matches = data.matches;
+      updateDisplay();
+      form.reset();
+      populateDropdowns(players);
+    });
+}
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const winner = winnerSelect.value;
-    const loser = loserSelect.value;
-    const winnerCount = parseInt(document.getElementById('winnerCount').value, 10);
-    const loserCount = parseInt(document.getElementById('loserCount').value, 10);
-
-    if (winner === loser) {
-      alert("Winner and loser must be different.");
-      return;
-    }
-
-    if (isNaN(winnerCount) || isNaN(loserCount) || (winnerCount + loserCount) === 0) {
-      alert("Please enter at least one game.");
-      return;
-    }
-
-    const matchesToSend = [];
-
-    for (let i = 0; i < winnerCount; i++) {
-      matchesToSend.push({
-        player1: winner,
-        player2: loser,
-        winner,
-        date: new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })).toISOString()
-      });
-    }
-
-    for (let i = 0; i < loserCount; i++) {
-      matchesToSend.push({
-        player1: loser,
-        player2: winner,
-        winner: loser,
-        date: new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })).toISOString()
-      });
-    }
-
-    fetch('/add-match', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(matchesToSend)
+function fetchAndRender() {
+  fetch('/matches')
+    .then(res => res.json())
+    .then(data => {
+      matches = data.matches;
+      players = data.players;
+      populateDropdowns(players);
+      preventDuplicateSelection();
+      updateDisplay();
     })
-      .then(res => res.json())
-      .then(data => {
-        matches = data.matches;
-        updateDisplay();
-        form.reset();
-        populateDropdowns(players);
-      });
-  });
+    .catch(err => {
+      alert("Failed to load data from server.");
+      console.error("Fetch error:", err);
+    });
 
   winnerSelect.addEventListener('change', preventDuplicateSelection);
   loserSelect.addEventListener('change', preventDuplicateSelection);
-});
-
-fetch('/matches')
-  .then(res => res.json())
-  .then(data => {
-    matches = data.matches;
-    players = data.players;
-    populateDropdowns(players);
-    preventDuplicateSelection();
-    updateDisplay();
-  })
-  .catch(err => {
-    alert("Failed to load data from server.");
-    console.error("Fetch error:", err);
-  });
+}
 
 function populateDropdowns(playerList) {
   [winnerSelect, loserSelect].forEach(select => {
